@@ -4,9 +4,6 @@ class HomeController{
         try {
             call_user_func([$this,$method],$params);
         } catch (Error $e) {
-            // La route pour ce contrôleur est égale à "/"
-            // Donc aucune method ne sera jamais trouvée
-            // Donc par défaut on éxecute la methode home
             call_user_func([$this,"home"],$params);
         }
     }

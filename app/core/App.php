@@ -1,6 +1,4 @@
 <?php
-require_once(__DIR__ . "/../controllers/ProductController.php");
-require_once(__DIR__ . "/../models/ProductModel.php");
 require_once(__DIR__ . "/Router.php");
 
 // const ROOT_APP_PATH = "path/to/website";
