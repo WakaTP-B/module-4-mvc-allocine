@@ -1,14 +1,14 @@
 <?php
 
-class ProductModel
+class FilmModel
 {
     private PDO $bdd;
 
-    private PDOStatement $addProduct;
-    private PDOStatement $delProduct;
-    private PDOStatement $getProduct;
-    private PDOStatement $getProducts;
-    private PDOStatement $editProduct;
+    private PDOStatement $addFilm;
+    private PDOStatement $delFilm;
+    private PDOStatement $getFilm;
+    private PDOStatement $getFilms;
+    private PDOStatement $editFilm;
 
 
 
@@ -17,170 +17,182 @@ class ProductModel
         // Connexion à la base de donnée
         $this->bdd = new PDO("mysql:host=bdd;dbname=app-database", "root", "root");
 
-        // Création d'une requête préparée qui récupère tout les produits
-        $this->getProducts = $this->bdd->prepare("SELECT * FROM `Produit` 
-        LIMIT :limit");
+        // Création d'une requête préparée qui récupère tout les films
+        $this->getFilms = $this->bdd->prepare("SELECT * FROM `Film` LIMIT :limit");
         // Requete Get by ID
-        $this->getProduct = $this->bdd->prepare("SELECT * FROM `Produit` WHERE id = :id");
+        $this->getFilm = $this->bdd->prepare("SELECT * FROM `film` WHERE id = :id");
 
-        $this->addProduct = $this->bdd->prepare("INSERT INTO `Produit`(name, price, image)VALUES(:name, :price, :image)");
+        $this->addFilm = $this->bdd->prepare("INSERT INTO `film`(name, price, image)VALUES(:name, :price, :image)");
 
-        $this->delProduct = $this->bdd->prepare(" DELETE FROM `Produit` WHERE id = :id ");
+        $this->delFilm = $this->bdd->prepare(" DELETE FROM `film` WHERE id = :id ");
 
-        $this->editProduct = $this->bdd->prepare("UPDATE Produit SET name= :name, price = :price, image = :image WHERE id = :id");
+        $this->editFilm = $this->bdd->prepare("UPDATE film SET name= :name, price = :price, image = :image WHERE id = :id");
     }
     public function getAll(int $limit = 50): array
     {
         // Définir la valeur de LIMIT, par défault 50
         // LIMIT étant un INT ont n'oublie pas de préciser le type PDO::PARAM_INT.
-        $this->getProducts->bindValue("limit", $limit, PDO::PARAM_INT);
+        $this->getFilms->bindValue("limit", $limit, PDO::PARAM_INT);
         // Executer la requête
-        $this->getProducts->execute();
+        $this->getFilms->execute();
         // Récupérer la réponse 
-        $rawProducts = $this->getProducts->fetchAll();
+        $rawFilms = $this->getFilms->fetchAll();
 
-        // Formater la réponse dans un tableau de ProductEntity
-        $productsEntity = [];
-        foreach ($rawProducts as $rawProduct) {
-            $productsEntity[] = new ProductEntity(
-                $rawProduct["name"],
-                $rawProduct["price"],
-                $rawProduct["image"],
-                $rawProduct["id"]
+        // Formater la réponse dans un tableau de FilmEntity
+        $FilmsEntity = [];
+        foreach ($rawFilms as $rawFilm) {
+            $FilmsEntity[] = new FilmEntity(
+                $rawFilm["id"],
+                $rawFilm["nom"],
+                $rawFilm["date_sortie"],
+                $rawFilm["genre"],
+                $rawFilm["auteur"],
+                $rawFilm["cover"]
             );
         }
 
 
-        // Renvoyer le tableau de ProductEntity
-        return $productsEntity;
+        // Renvoyer le tableau de FilmEntity
+        return $FilmsEntity;
     }
     /**
-     * Recupérer un produit via son id.
-     * @return Une ProductEntity ou NULL si aucune ne correspond à l'$id
+     * Recupérer un film via son id.
+     * @return Une FilmEntity ou NULL si aucune ne correspond à l'$id
      * @param int id : la clé primaire de l'entity demandée.
      * */
-    public function get(int $id): ProductEntity | NULL
+    public function get(int $id): FilmEntity | NULL
     {
         // Lier l'id avec le bon type
-        $this->getProduct->bindValue("id", $id, PDO::PARAM_INT);
-        $this->getProduct->execute();
+        $this->getFilm->bindValue("id", $id, PDO::PARAM_INT);
+        $this->getFilm->execute();
 
         // Récupérer une seule ligne
-        $rawProduct = $this->getProduct->fetch(PDO::FETCH_ASSOC);
+        $rawFilm = $this->getFilm->fetch(PDO::FETCH_ASSOC);
 
-        // Si aucun produit trouvé
-        if (!$rawProduct) {
+        // Si aucun film trouvé
+        if (!$rawFilm) {
             return null;
         }
 
-        // Retourner un objet ProductEntity
-        return new ProductEntity(
-            $rawProduct["name"],
-            $rawProduct["price"],
-            $rawProduct["image"],
-            $rawProduct["id"]
+        // Retourner un objet FilmEntity
+        return new FilmEntity(
+                $rawFilm["id"],
+                $rawFilm["nom"],
+                $rawFilm["date_sortie"],
+                $rawFilm["genre"],
+                $rawFilm["auteur"],
+                $rawFilm["cover"]
         );
     }
 
     /**
-     * Ajouter un produit
+     * Ajouter un film
      * @return void : ne renvoi rien
      * @param les informations de l'entity
      * */
     public function add(string $name, float $price, string $image)
     {
-        $this->addProduct->bindValue(":name", $name, PDO::PARAM_STR);
-        $this->addProduct->bindValue(":price", $price, PDO::PARAM_STR);
-        $this->addProduct->bindValue(":image", $image, PDO::PARAM_STR);
+        $this->addFilm->bindValue(":name", $name, PDO::PARAM_STR);
+        $this->addFilm->bindValue(":price", $price, PDO::PARAM_STR);
+        $this->addFilm->bindValue(":image", $image, PDO::PARAM_STR);
 
-        $this->addProduct->execute();
+        $this->addFilm->execute();
     }
 
 
     /**
-     * Supprime un produit via son id
+     * Supprime un film via son id
      * @return void : ne renvoi rien
      * @param int $id : la clé primaire de l'entité à supprimer
      * */
     public function del(int $id): void
     {
-        $this->delProduct->bindValue(":id", $id, PDO::PARAM_INT);
+        $this->delFilm->bindValue(":id", $id, PDO::PARAM_INT);
 
-        $this->delProduct->execute();
+        $this->delFilm->execute();
     }
     public function edit(
         int $id,
         string $name = NULL,
         float $price = NULL,
         string $image = NULL
-    ): ProductEntity | NULL {
+    ): FilmEntity | NULL {
 
-        $this->editProduct->bindValue("id", $id, PDO::PARAM_INT);
-        $this->editProduct->bindValue(":name", $name, PDO::PARAM_STR);
-        $this->editProduct->bindValue(":price", $price, PDO::PARAM_STR);
-        $this->editProduct->bindValue(":image", $image, PDO::PARAM_STR);
-        $this->editProduct->execute();
+        $this->editFilm->bindValue("id", $id, PDO::PARAM_INT);
+        $this->editFilm->bindValue(":name", $name, PDO::PARAM_STR);
+        $this->editFilm->bindValue(":price", $price, PDO::PARAM_STR);
+        $this->editFilm->bindValue(":image", $image, PDO::PARAM_STR);
+        $this->editFilm->execute();
         return NULL;
     }
 }
 
 
-class ProductEntity
+class FilmEntity
 {
-    private $name;
-    private $price;
-    private $image;
-    private $id;
+    private int $id;
+    private string $nom;
+    private string $date_sortie;
+    private string $genre;
+    private string $auteur;
+    private string $cover;
 
-    private const NAME_MIN_LENGTH = 3;
-    private const PRICE_MIN = 0;
-    private const DEFAULT_IMG_URL = "/public/images/default.png";
 
-    function __construct(string $name, float $price, string $image, int $id = null)
+    function __construct(int $id, string $nom, string $date_sortie, string $genre, string $auteur, string $cover)
     {
-        $this->setName($name);
-        $this->setPrice($price);
-        $this->setImage($image);
+        // $this->setColumnName($columnName);
         $this->id = $id;
+        $this->setNom($nom);
+        $this->setDate_sortie($date_sortie);
+        $this->setGenre($genre);
+        $this->setAuteur($auteur);
+        $this->setCover($cover);
     }
 
-    public function setName(string $name)
+    public function setNom(string $nom)
     {
-        if (strlen($name) < $this::NAME_MIN_LENGTH) {
-            throw new Error("Name is too short minimum 
-            length is " . $this::NAME_MIN_LENGTH);
-        }
-        $this->name = $name;
-    }
-    public function setPrice(float $price)
-    {
-        if ($price < 0) {
-            throw new Error("Price is too short minimum price is " . $this::PRICE_MIN);
-        }
-        $this->price = $price;
-    }
-    public function setImage(string $image)
-    {
-        if (strlen($image) <= 0) {
-            $this->image = $this::DEFAULT_IMG_URL;
-        }
-        $this->image = $image;
+        return $this->nom = $nom;
     }
 
-    public function getName(): string
+    public function setDate_sortie(string $date_sortie)
     {
-        return $this->name;
+        return $this->date_sortie = $date_sortie;
     }
-    public function getPrice(): float
+    public function setGenre(string $genre)
     {
-        return $this->price;
+        return $this->genre = $genre;
     }
-    public function getImage(): string
+    public function setAuteur(string $auteur)
     {
-        return $this->image;
+        return $this->auteur = $auteur;
     }
+        public function setCover(string $cover)
+    {
+        return $this->cover = $cover;
+    }
+
     public function getId(): int
     {
         return $this->id;
+    }
+    public function getNom(): string
+    {
+        return $this->nom;
+    }
+    public function getDate_sortie(): string
+    {
+        return $this->date_sortie;
+    }
+    public function getGenre(): string
+    {
+        return $this->genre;
+    }
+    public function getAuteur(): string
+    {
+        return $this->auteur;
+    }
+       public function getCover(): string
+    {
+        return $this->cover;
     }
 }
