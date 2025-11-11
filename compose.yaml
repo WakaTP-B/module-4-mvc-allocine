@@ -1,16 +1,22 @@
+version: '3.8'
+
 services:
   bdd:
-    image: mysql
+    image: mysql:8.0
+    platform: linux/amd64
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: app-database
+      MYSQL_DATABASE: allocine
       MYSQL_USER: user
       MYSQL_PASSWORD: user
     volumes:
       - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
 
   web:
     build: ./web
+    platform: linux/amd64
     ports:
       - "8080:80"
     volumes:
@@ -19,10 +25,13 @@ services:
       - bdd
 
   pma:
-    image: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    platform: linux/amd64
     environment:
       PMA_HOST: bdd
-      MYSQL_ROOT_PASSWORD: root
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
     ports:
       - "8081:80"
     depends_on:

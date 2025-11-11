@@ -1,7 +1,12 @@
 FROM php:8.2-apache
 
-RUN docker-php-ext-install pdo
-RUN docker-php-ext-install pdo_mysql
-RUN docker-php-ext-install mysqli
+# Installer les extensions MySQL/PDO
+RUN docker-php-ext-install pdo pdo_mysql mysqli
+
+# Activer mod_rewrite pour routes MVC
 RUN a2enmod rewrite
-RUN service apache2 restart
+
+# Copier le code PHP
+COPY . /var/www/html/
+
+EXPOSE 80
