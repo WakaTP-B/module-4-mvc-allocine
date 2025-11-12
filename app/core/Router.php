@@ -20,9 +20,8 @@ class Router
                 return new FilmController();
                 break;
 
-
             default:
-                // Si aucune route de match
+                // 404
                 return new NotFoundController();
                 break;
         }

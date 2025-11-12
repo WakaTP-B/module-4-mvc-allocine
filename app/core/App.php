@@ -2,9 +2,7 @@
 require_once(__DIR__ . "/Router.php");
 
 // const ROOT_APP_PATH = "path/to/website";
-const ROOT_APP_PATH = "first_mvc";
-
-
+const ROOT_APP_PATH = "allocine";
 
 class App
 {

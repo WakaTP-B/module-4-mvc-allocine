@@ -51,10 +51,10 @@ class FilmModel
         }
         return new FilmEntity(
             $rawFilm["id"],
-            $rawFilm["nom"],
+            $rawFilm["titre"],
             $rawFilm["date_sortie"],
             $rawFilm["genre"],
-            $rawFilm["auteur"],
+            $rawFilm["realisateur"],
             $rawFilm["cover"],
             $rawFilm["synopsis"]
         );
@@ -70,10 +70,10 @@ class FilmModel
         foreach ($rawFilms as $rawFilm) {
             $FilmsEntity[] = new FilmEntity(
                 $rawFilm["id"],
-                $rawFilm["nom"],
+                $rawFilm["titre"],
                 $rawFilm["date_sortie"],
                 $rawFilm["genre"],
-                $rawFilm["auteur"],
+                $rawFilm["realisateur"],
                 $rawFilm["cover"],
                 $rawFilm["synopsis"]
             );
