@@ -2,6 +2,7 @@
 
 require_once(__DIR__ . "/../controllers/HomeController.php");
 require_once(__DIR__ . "/../controllers/NotFoundController.php");
+require_once(__DIR__ . "/../controllers/FilmController.php");
 
 
 class Router
@@ -13,6 +14,10 @@ class Router
             // Route : /
             case '':
                 return new HomeController();
+                break;
+
+            case 'film':
+                return new FilmController();
                 break;
 
 

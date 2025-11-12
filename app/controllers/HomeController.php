@@ -1,4 +1,5 @@
 <?php
+require_once(__DIR__."/../models/FilmModel.php");
 class HomeController
 {
     public function view(string $method, array $params = [])
@@ -12,8 +13,11 @@ class HomeController
 
     public function home($params = [])
     {
-        require_once(__DIR__ . "/../views/home.php");
         $filmModel = new FilmModel();
         $films = $filmModel->getAll();
+
+        require_once(__DIR__ . "/../views/home.php");
+
+
     }
 }

@@ -14,7 +14,7 @@ class [MODEL_NAME]Model{
 
     function __construct()
     {
-        $this->bdd = new PDO("mysql:host=lamp-mysql;dbname=boutique", "root", "root");
+        $this->bdd = new PDO("mysql:host=bdd;dbname=allocine", "root", "root");
 
         // Adaptez cette requête à votre table [MODEL_NAME]
         $this->add[MODEL_NAME] = $this->bdd->prepare("INSERT INTO ...TODO... ");

@@ -14,31 +14,58 @@ class FilmModel
 
     function __construct()
     {
-        // Connexion à la base de donnée
-        $this->bdd = new PDO("mysql:host=bdd;dbname=app-database", "root", "root");
+        $this->bdd = new PDO("mysql:host=bdd;dbname=allocine", "root", "root");
 
-        // Création d'une requête préparée qui récupère tout les films
+        // Adaptez cette requête à votre table Film
+        $this->addFilm = $this->bdd->prepare("INSERT INTO `Film` (nom, date_sortie, genre, auteur, cover,synopsis) VALUES (:nom, :date_sortie, :genre, :auteur,:cover,:synopsis)");
+
+        $this->delFilm = $this->bdd->prepare("DELETE FROM `Film` WHERE `id` = :id;");
+
+        $this->getFilm = $this->bdd->prepare("SELECT * FROM `Film` WHERE `id` = :id;");
+
+        // Adaptez cette requête à votre table Film
+        $this->editFilm = $this->bdd->prepare("UPDATE `Film` SET ...TODO... WHERE `id` = :id");
+
         $this->getFilms = $this->bdd->prepare("SELECT * FROM `Film` LIMIT :limit");
-        // Requete Get by ID
-        $this->getFilm = $this->bdd->prepare("SELECT * FROM `film` WHERE id = :id");
-
-        $this->addFilm = $this->bdd->prepare("INSERT INTO `film`(name, price, image)VALUES(:name, :price, :image)");
-
-        $this->delFilm = $this->bdd->prepare(" DELETE FROM `film` WHERE id = :id ");
-
-        $this->editFilm = $this->bdd->prepare("UPDATE film SET name= :name, price = :price, image = :image WHERE id = :id");
     }
+    public function add(): void
+    {
+        // $this->addFilm->bindValue("...", $columnValue);
+        $this->addFilm->execute();
+    }
+
+    public function del(int $id): void
+    {
+        $this->delFilm->bindValue("id", $id);
+        $this->delFilm->execute();
+    }
+    public function get($id): FilmEntity | NULL
+    {
+        $this->getFilm->bindValue("id", $id, PDO::PARAM_INT);
+        $this->getFilm->execute();
+        $rawFilm = $this->getFilm->fetch();
+
+        // Si le produit n'existe pas, je renvoie NULL
+        if (!$rawFilm) {
+            return NULL;
+        }
+        return new FilmEntity(
+            $rawFilm["id"],
+            $rawFilm["nom"],
+            $rawFilm["date_sortie"],
+            $rawFilm["genre"],
+            $rawFilm["auteur"],
+            $rawFilm["cover"],
+            $rawFilm["synopsis"]
+        );
+    }
+
     public function getAll(int $limit = 50): array
     {
-        // Définir la valeur de LIMIT, par défault 50
-        // LIMIT étant un INT ont n'oublie pas de préciser le type PDO::PARAM_INT.
         $this->getFilms->bindValue("limit", $limit, PDO::PARAM_INT);
-        // Executer la requête
         $this->getFilms->execute();
-        // Récupérer la réponse 
         $rawFilms = $this->getFilms->fetchAll();
 
-        // Formater la réponse dans un tableau de FilmEntity
         $FilmsEntity = [];
         foreach ($rawFilms as $rawFilm) {
             $FilmsEntity[] = new FilmEntity(
@@ -47,83 +74,42 @@ class FilmModel
                 $rawFilm["date_sortie"],
                 $rawFilm["genre"],
                 $rawFilm["auteur"],
-                $rawFilm["cover"]
+                $rawFilm["cover"],
+                $rawFilm["synopsis"]
             );
         }
 
-
-        // Renvoyer le tableau de FilmEntity
         return $FilmsEntity;
     }
-    /**
-     * Recupérer un film via son id.
-     * @return Une FilmEntity ou NULL si aucune ne correspond à l'$id
-     * @param int id : la clé primaire de l'entity demandée.
-     * */
-    public function get(int $id): FilmEntity | NULL
+
+    // À part l'id, les paramètres de la méthode edit sont optionnels.
+    // Nous ne voulons pas forcer le développeur à modifier tous les champs
+    public function edit(int $id): FilmEntity | NULL
     {
-        // Lier l'id avec le bon type
-        $this->getFilm->bindValue("id", $id, PDO::PARAM_INT);
-        $this->getFilm->execute();
+        $originalFilmEntity = $this->get($id);
 
-        // Récupérer une seule ligne
-        $rawFilm = $this->getFilm->fetch(PDO::FETCH_ASSOC);
-
-        // Si aucun film trouvé
-        if (!$rawFilm) {
-            return null;
+        // Si le produit n'existe pas, je renvoie NULL
+        if (!$originalFilmEntity) {
+            return NULL;
         }
 
-        // Retourner un objet FilmEntity
-        return new FilmEntity(
-                $rawFilm["id"],
-                $rawFilm["nom"],
-                $rawFilm["date_sortie"],
-                $rawFilm["genre"],
-                $rawFilm["auteur"],
-                $rawFilm["cover"]
-        );
-    }
-
-    /**
-     * Ajouter un film
-     * @return void : ne renvoi rien
-     * @param les informations de l'entity
-     * */
-    public function add(string $name, float $price, string $image)
-    {
-        $this->addFilm->bindValue(":name", $name, PDO::PARAM_STR);
-        $this->addFilm->bindValue(":price", $price, PDO::PARAM_STR);
-        $this->addFilm->bindValue(":image", $image, PDO::PARAM_STR);
-
-        $this->addFilm->execute();
-    }
-
-
-    /**
-     * Supprime un film via son id
-     * @return void : ne renvoi rien
-     * @param int $id : la clé primaire de l'entité à supprimer
-     * */
-    public function del(int $id): void
-    {
-        $this->delFilm->bindValue(":id", $id, PDO::PARAM_INT);
-
-        $this->delFilm->execute();
-    }
-    public function edit(
-        int $id,
-        string $name = NULL,
-        float $price = NULL,
-        string $image = NULL
-    ): FilmEntity | NULL {
-
+        // On utilise un opérateur ternaire ? : ;
+        // Il permet en une ligne de renvoyer le nom original du 
+        // produit si le paramètre est NULL.
+        // En effet, si le paramètre est NULL, cela veut dire que 
+        // l'utilisateur ne souhaite pas le modifier.
+        // Le même résultat est possible avec des if else
+        // Je précise PDO::PARAM_INT car id est un INT
         $this->editFilm->bindValue("id", $id, PDO::PARAM_INT);
-        $this->editFilm->bindValue(":name", $name, PDO::PARAM_STR);
-        $this->editFilm->bindValue(":price", $price, PDO::PARAM_STR);
-        $this->editFilm->bindValue(":image", $image, PDO::PARAM_STR);
+
+        // $this->editFilm->bindValue($columnName,
+        //  $columnName ? $columnName : $originalFilmEntity->getColumnName() );
+
         $this->editFilm->execute();
-        return NULL;
+
+        // Une fois modifié, je renvoie le Film en utilisant ma
+        // propre méthode public FilmModel::get().
+        return $this->get($id);
     }
 }
 
@@ -136,9 +122,9 @@ class FilmEntity
     private string $genre;
     private string $auteur;
     private string $cover;
-
-
-    function __construct(int $id, string $nom, string $date_sortie, string $genre, string $auteur, string $cover)
+    private string $synopsis;
+    // private $columnName;
+    function __construct(int $id, string $nom, string $date_sortie, string $genre, string $auteur, string $cover, string $synopsis)
     {
         // $this->setColumnName($columnName);
         $this->id = $id;
@@ -147,6 +133,7 @@ class FilmEntity
         $this->setGenre($genre);
         $this->setAuteur($auteur);
         $this->setCover($cover);
+        $this->setSynopsis($synopsis);
     }
 
     public function setNom(string $nom)
@@ -166,9 +153,13 @@ class FilmEntity
     {
         return $this->auteur = $auteur;
     }
-        public function setCover(string $cover)
+    public function setCover(string $cover)
     {
         return $this->cover = $cover;
+    }
+    public function setSynopsis(string $synopsis)
+    {
+        return $this->synopsis = $synopsis;
     }
 
     public function getId(): int
@@ -191,8 +182,12 @@ class FilmEntity
     {
         return $this->auteur;
     }
-       public function getCover(): string
+    public function getCover(): string
     {
         return $this->cover;
+    }
+    public function getSynopsis(): string
+    {
+        return $this->synopsis;
     }
 }
