@@ -39,22 +39,26 @@ class DiffusionModel
         $this->delDiffusion->bindValue("id", $id);
         $this->delDiffusion->execute();
     }
-    public function get($id): DiffusionEntity | NULL
+    public function get($film_id): DiffusionEntity | NULL
     {
-        $this->getDiffusion->bindValue("id", $id, PDO::PARAM_INT);
+        $this->getDiffusion->bindValue("id", $film_id, PDO::PARAM_INT);
         $this->getDiffusion->execute();
-        $rawDiffusion = $this->getDiffusion->fetch();
+        $rawDiffusions = $this->getDiffusion->fetchAll();
 
         // Si le produit n'existe pas, je renvoie NULL
-        if (!$rawDiffusion) {
+        if (!$rawDiffusions) {
             return NULL;
         }
-        return new DiffusionEntity(
+        $diffusionsEntity = [];
+        foreach ($rawdiffusions as $rawdiffusion) {
+            $diffusionsEntity[] = new diffusionEntity(
+                $rawdiffusion["id"],
+                $rawdiffusion["film_id"],
+                $rawdiffusion["date_diffusion"]
 
-            $rawDiffusion["id"],
-            $rawDiffusion["film_id"],
-            $rawDiffusion["date_diffusion"]
-        );
+            );
+        }
+        return $diffusionsEntity;
     }
 
     public function getAll(int $limit = 50): array
