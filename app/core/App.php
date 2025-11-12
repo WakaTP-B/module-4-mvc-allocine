@@ -1,5 +1,6 @@
 <?php
 require_once(__DIR__ . "/Router.php");
+require_once(__DIR__."/../helpers/tools.php");
 
 // const ROOT_APP_PATH = "path/to/website";
 const ROOT_APP_PATH = "allocine";

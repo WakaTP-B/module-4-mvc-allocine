@@ -1,5 +1,5 @@
 <?php
-// Remplacez Name par le nom du controller
+// Remplacez Name par le titre du controller
 class [CONTROLLER_NAME]Controller{
     public function view(string $method, array $params = []){
         try {
@@ -10,9 +10,9 @@ class [CONTROLLER_NAME]Controller{
         }
     }
 
-    // Remplacez methodName par le nom d'une méthode
+    // Remplacez methodName par le titre d'une méthode
     //public function methodName($params = []){
-        // Remplacez vue-name par le nom de la vue
+        // Remplacez vue-name par le titre de la vue
     //    require_once(__DIR__.'/../views/vue-name.php');
     //}
 }

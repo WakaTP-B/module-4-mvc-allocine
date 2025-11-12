@@ -17,7 +17,7 @@ class FilmModel
         $this->bdd = new PDO("mysql:host=bdd;dbname=allocine", "root", "root");
 
         // Adaptez cette requête à votre table Film
-        $this->addFilm = $this->bdd->prepare("INSERT INTO `Film` (nom, date_sortie, genre, auteur, cover,synopsis) VALUES (:nom, :date_sortie, :genre, :auteur,:cover,:synopsis)");
+        $this->addFilm = $this->bdd->prepare("INSERT INTO `Film` (titre, date_sortie, genre, real, cover,synopsis) VALUES (:titre, :date_sortie, :genre, :real,:cover,:synopsis)");
 
         $this->delFilm = $this->bdd->prepare("DELETE FROM `Film` WHERE `id` = :id;");
 
@@ -94,7 +94,7 @@ class FilmModel
         }
 
         // On utilise un opérateur ternaire ? : ;
-        // Il permet en une ligne de renvoyer le nom original du 
+        // Il permet en une ligne de renvoyer le titre original du 
         // produit si le paramètre est NULL.
         // En effet, si le paramètre est NULL, cela veut dire que 
         // l'utilisateur ne souhaite pas le modifier.
@@ -117,28 +117,28 @@ class FilmModel
 class FilmEntity
 {
     private int $id;
-    private string $nom;
+    private string $titre;
     private string $date_sortie;
     private string $genre;
-    private string $auteur;
+    private string $real;
     private string $cover;
     private string $synopsis;
     // private $columnName;
-    function __construct(int $id, string $nom, string $date_sortie, string $genre, string $auteur, string $cover, string $synopsis)
+    function __construct(int $id, string $titre, string $date_sortie, string $genre, string $real, string $cover, string $synopsis)
     {
         // $this->setColumnName($columnName);
         $this->id = $id;
-        $this->setNom($nom);
+        $this->setTitre($titre);
         $this->setDate_sortie($date_sortie);
         $this->setGenre($genre);
-        $this->setAuteur($auteur);
+        $this->setReal($real);
         $this->setCover($cover);
         $this->setSynopsis($synopsis);
     }
 
-    public function setNom(string $nom)
+    public function setTitre(string $titre)
     {
-        return $this->nom = $nom;
+        return $this->titre = $titre;
     }
 
     public function setDate_sortie(string $date_sortie)
@@ -149,9 +149,9 @@ class FilmEntity
     {
         return $this->genre = $genre;
     }
-    public function setAuteur(string $auteur)
+    public function setReal(string $real)
     {
-        return $this->auteur = $auteur;
+        return $this->real = $real;
     }
     public function setCover(string $cover)
     {
@@ -166,9 +166,9 @@ class FilmEntity
     {
         return $this->id;
     }
-    public function getNom(): string
+    public function getTitre(): string
     {
-        return $this->nom;
+        return $this->titre;
     }
     public function getDate_sortie(): string
     {
@@ -178,9 +178,9 @@ class FilmEntity
     {
         return $this->genre;
     }
-    public function getAuteur(): string
+    public function getReal(): string
     {
-        return $this->auteur;
+        return $this->real;
     }
     public function getCover(): string
     {

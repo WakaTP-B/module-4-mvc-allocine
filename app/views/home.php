@@ -8,19 +8,29 @@
 </head>
 
 <body>
-    <h1>Home</h1>
-    <div>
-        <?php foreach ($films as $film): ?>
-            <p>Titre: <?= $film->getNom(); ?></p>
-            <p>Date: <?= $film->getDate_sortie(); ?></p>
-            <p>Genre: <?= $film->getGenre(); ?> </p>
-            <p>Auteur: <?= $film->getAuteur(); ?> </p>
-            <img src="<?= $film->getCover(); ?>" alt="">
-            <a href="film/detail/<?= $film->getId(); ?>">Detil</a>
+    <h1>AlloCiné</h1>
 
-
-        <?php endforeach; ?>
+    <div class="login">
+        <a href="/user/login">Se connecter</a>
+        <a href="/user/register">S'inscrire</a>
     </div>
+
+    <section class="film-card">
+
+        <?php foreach ($films as $film): ?>
+            <div>
+                <h2><?= $film->getTitre(); ?></h2>
+                <p><?= $film->getReal(); ?></p>
+                <p><?= monthYear($film->getDate_sortie()); ?></p>
+                <p><?= $film->getGenre(); ?></p>
+
+                <!-- <img src="<?= $film->getCover(); ?>" alt="<?= $film->getTitre(); ?>"> -->
+
+                <a href="film/detail/<?= $film->getId(); ?>"><img src="<?= $film->getCover(); ?>" alt="<?= $film->getTitre(); ?>"></a>
+            </div>
+        <?php endforeach; ?>
+
+    </section>
 </body>
 
 </html>

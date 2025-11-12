@@ -3,6 +3,7 @@
 require_once(__DIR__ . "/../controllers/HomeController.php");
 require_once(__DIR__ . "/../controllers/NotFoundController.php");
 require_once(__DIR__ . "/../controllers/FilmController.php");
+require_once(__DIR__ . "/../controllers/UserController.php");
 
 
 class Router
@@ -18,6 +19,10 @@ class Router
 
             case 'film':
                 return new FilmController();
+                break;
+                
+                case 'user':
+                return new UserController();
                 break;
 
             default:

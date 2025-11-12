@@ -85,7 +85,7 @@ class [MODEL_NAME]Model{
         }
 
         // On utilise un opérateur ternaire ? : ;
-        // Il permet en une ligne de renvoyer le nom original du 
+        // Il permet en une ligne de renvoyer le titre original du 
         // produit si le paramètre est NULL.
         // En effet, si le paramètre est NULL, cela veut dire que 
         // l'utilisateur ne souhaite pas le modifier.

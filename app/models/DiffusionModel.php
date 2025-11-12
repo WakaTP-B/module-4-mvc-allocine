@@ -13,14 +13,13 @@ class DiffusionModel
     {
         $this->bdd = new PDO("mysql:host=bdd;dbname=allocine", "root", "root");
 
-        // Adaptez cette requête à votre table Diffusion
         $this->addDiffusion = $this->bdd->prepare("INSERT INTO `Diffusion` (`film_id`, `date_diffusion`) VALUES (:film_id, :date_diffusion)");
 
 
 
         $this->delDiffusion = $this->bdd->prepare("DELETE FROM `Diffusion` WHERE `id` = :id;");
 
-        $this->getDiffusion = $this->bdd->prepare("SELECT * FROM `Diffusion` WHERE `id` = :id;");
+        $this->getDiffusion = $this->bdd->prepare("SELECT * FROM `Diffusion` WHERE `film_id` = :film_id;");
 
         // Adaptez cette requête à votre table Diffusion
         $this->editDiffusion = $this->bdd->prepare("UPDATE `Diffusion` SET ...TODO... WHERE `id` = :id");
@@ -39,19 +38,18 @@ class DiffusionModel
         $this->delDiffusion->bindValue("id", $id);
         $this->delDiffusion->execute();
     }
-    public function get($film_id): DiffusionEntity | NULL
+    public function get($film_id): array | NULL
     {
-        $this->getDiffusion->bindValue("id", $film_id, PDO::PARAM_INT);
+        $this->getDiffusion->bindValue("film_id", $film_id, PDO::PARAM_INT);
         $this->getDiffusion->execute();
         $rawDiffusions = $this->getDiffusion->fetchAll();
-
-        // Si le produit n'existe pas, je renvoie NULL
+        
         if (!$rawDiffusions) {
             return NULL;
         }
         $diffusionsEntity = [];
-        foreach ($rawdiffusions as $rawdiffusion) {
-            $diffusionsEntity[] = new diffusionEntity(
+        foreach ($rawDiffusions as $rawdiffusion) {
+            $diffusionsEntity[] = new DiffusionEntity(
                 $rawdiffusion["id"],
                 $rawdiffusion["film_id"],
                 $rawdiffusion["date_diffusion"]
@@ -67,16 +65,16 @@ class DiffusionModel
         $this->getDiffusions->execute();
         $rawDiffusions = $this->getDiffusions->fetchAll();
 
-        $DiffusionsEntity = [];
+        $diffusionsEntity = [];
         foreach ($rawDiffusions as $rawDiffusion) {
-            $DiffusionsEntity[] = new DiffusionEntity(
+            $diffusionsEntity[] = new DiffusionEntity(
                 $rawDiffusion["id"],
                 $rawDiffusion["film_id"],
                 $rawDiffusion["date_diffusion"]
             );
         }
 
-        return $DiffusionsEntity;
+        return $diffusionsEntity;
     }
 
     public function edit(int $id, int $film_id, string $date_diffusion): DiffusionEntity | NULL

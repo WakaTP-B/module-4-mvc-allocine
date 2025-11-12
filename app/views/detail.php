@@ -12,8 +12,8 @@
         <?php if ($film) : ?>
 
             <h1>Detail du film</h1>
-            <img src="<?= $film->getCover(); ?>" alt="<?= $film->getNom(); ?><">
-            <p><?= $film->getNom(); ?></p>
+            <img src="<?= $film->getCover(); ?>" alt="<?= $film->getTitre(); ?><">
+            <p><?= $film->getTitre(); ?></p>
             <p>Synopsis : <?= $film->getSynopsis(); ?></p>
         <?php else: ?>
             <p>Film introuvable</p>
@@ -22,10 +22,9 @@
     </div>
     <h2>Séance</h2>
     <?php foreach ($diffusion as $dif): ?>
-
         <p><?= $dif->getDate_diffusion(); ?></p>
     <?php endforeach; ?>
-
+    <a href="/<?= ROOT_APP_PATH ?>">Retour à l'acceuil</a>
 </body>
 
 </html>

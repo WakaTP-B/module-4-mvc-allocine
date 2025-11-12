@@ -35,7 +35,7 @@ class FilmController
 
         require_once(__DIR__ . "/../views/detail.php");
     }
-    
+
     public function delete()
     {
         echo "Delete";

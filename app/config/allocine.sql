@@ -2,10 +2,10 @@
 -- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Hôte : bdd
--- Généré le : mer. 12 nov. 2025 à 20:06
--- Version du serveur : 9.5.0
--- Version de PHP : 8.3.27
+-- Hôte : bdd:3306
+-- Généré le : mer. 12 nov. 2025 à 23:06
+-- Version du serveur : 8.0.44
+-- Version de PHP : 8.3.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -67,10 +67,10 @@ INSERT INTO `Diffusion` (`id`, `film_id`, `date_diffusion`) VALUES
 
 CREATE TABLE `Film` (
   `id` int NOT NULL,
-  `nom` varchar(150) NOT NULL,
+  `titre` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `date_sortie` date DEFAULT NULL,
   `genre` enum('Action','Comédie','Drame','Science-fiction','Horreur','Thriller','Animation','Aventure','Romance','Documentaire') DEFAULT NULL,
-  `auteur` varchar(100) DEFAULT NULL,
+  `realisateur` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `cover` varchar(255) DEFAULT NULL,
   `synopsis` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -79,7 +79,7 @@ CREATE TABLE `Film` (
 -- Déchargement des données de la table `Film`
 --
 
-INSERT INTO `Film` (`id`, `nom`, `date_sortie`, `genre`, `auteur`, `cover`, `synopsis`) VALUES
+INSERT INTO `Film` (`id`, `titre`, `date_sortie`, `genre`, `realisateur`, `cover`, `synopsis`) VALUES
 (1, 'Inception', '2010-07-16', 'Science-fiction', 'Christopher Nolan', 'https://image.tmdb.org/t/p/w500/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg', 'Un voleur d\'informations pénètre les rêves de ses cibles pour dérober leurs secrets. Mais sa dernière mission l’entraîne dans un monde où réalité et rêve se confondent.'),
 (2, 'Le Seigneur des Anneaux', '2001-12-19', 'Aventure', 'Peter Jackson', 'https://image.tmdb.org/t/p/w500/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg', 'Un jeune hobbit, Frodon, hérite d’un anneau maléfique et part dans une quête épique pour le détruire avant qu’il ne tombe entre de mauvaises mains.'),
 (3, 'Titanic', '1997-12-19', 'Romance', 'James Cameron', 'https://image.tmdb.org/t/p/w500/9xjZS2rlVxm8SFx8kPC3aIGCOYQ.jpg', 'À bord du paquebot légendaire, Jack et Rose vivent une histoire d’amour tragique alors que le Titanic sombre dans l’océan.'),
@@ -101,6 +101,26 @@ INSERT INTO `Film` (`id`, `nom`, `date_sortie`, `genre`, `auteur`, `cover`, `syn
 (19, 'Joker', '2019-10-04', 'Drame', 'Todd Phillips', 'https://image.tmdb.org/t/p/w500/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg', 'Arthur Fleck, un comédien raté, sombre peu à peu dans la folie et devient le criminel connu sous le nom de Joker.'),
 (20, 'Top Gun: Maverick', '2022-05-27', 'Action', 'Joseph Kosinski', 'https://image.tmdb.org/t/p/w500/62HCnUTziyWcpDaBO2i1DX17ljH.jpg', 'Le pilote d’élite Maverick reprend du service pour former une nouvelle génération d’aviateurs et affronter son passé.');
 
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `User`
+--
+
+CREATE TABLE `User` (
+  `id` int NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` enum('user','admin') NOT NULL DEFAULT 'user'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `User`
+--
+
+INSERT INTO `User` (`id`, `username`, `password`, `role`) VALUES
+(1, 'amaury', '$2y$10$Rx/Dk6muNHcooRvdBzh7MesYqvVFeX3TyQRzTss0ZOroZ9SPYjRK2', 'user');
+
 --
 -- Index pour les tables déchargées
 --
@@ -119,6 +139,13 @@ ALTER TABLE `Film`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Index pour la table `User`
+--
+ALTER TABLE `User`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`);
+
+--
 -- AUTO_INCREMENT pour les tables déchargées
 --
 
@@ -133,6 +160,12 @@ ALTER TABLE `Diffusion`
 --
 ALTER TABLE `Film`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- AUTO_INCREMENT pour la table `User`
+--
+ALTER TABLE `User`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Contraintes pour les tables déchargées
